@@ -1,3 +1,5 @@
+This is a clone of the original python-whois with some bug fixes since the original maintainer since to have abandoned the project.
+
 pythonwhois
 ===========
 
