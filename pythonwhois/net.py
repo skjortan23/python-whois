@@ -83,12 +83,20 @@ def get_root_server(domain):
 	
 def whois_request(domain, server, port=43):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	sock.connect((server, port))
-	sock.send(("%s\r\n" % domain).encode("utf-8"))
-	buff = b""
-	while True:
-		data = sock.recv(1024)
-		if len(data) == 0:
-			break
-		buff += data
-	return buff.decode("utf-8")
+	sock.settimeout(9)
+	try:
+		sock.connect((server, port))
+		sock.send(("%s\r\n" % domain).encode("utf-8"))
+		buff = b""
+		while True:
+			data = sock.recv(1024)
+			if len(data) == 0:
+				break
+			buff += data
+		sock.close()
+		return buff.decode("utf-8")
+
+	except socket.timeout:
+		sock.close()
+		raise LookupError("whois server: %s  not responding for domain:%s" % (server, domain))
+
